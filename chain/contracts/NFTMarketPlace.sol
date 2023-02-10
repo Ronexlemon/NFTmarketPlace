@@ -40,4 +40,5 @@ contract NFTMarketPlace is ERC721URIStorage {
     function getCurrentTokenId()public view returns(uint256){
         return _tokenid.current();
     }
+    
 }

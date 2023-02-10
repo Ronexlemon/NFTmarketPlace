@@ -94,25 +94,42 @@ contract NFTMarketPlace is ERC721URIStorage {
 
     function getMyNFTS() public view returns (ListedTokens[] memory) {
         uint totalItemCount = _tokenid.current();
-        uint itemCount =0;
+        uint itemCount = 0;
         uint currentIndex = 0;
-        for(uint i=0;i <totalItemCount ; i++){
-            if(idToListedToken[i+1].owner==msg.sender || idToListedToken[i+1].seller == msg.sender){
-                itemCount +=1;
+        for (uint i = 0; i < totalItemCount; i++) {
+            if (
+                idToListedToken[i + 1].owner == msg.sender ||
+                idToListedToken[i + 1].seller == msg.sender
+            ) {
+                itemCount += 1;
             }
         }
         ListedTokens[] memory items = new ListedTokens[](itemCount);
-        
+
         for (uint i = 0; i < itemCount; i++) {
-            if(idToListedToken[i+1].owner==msg.sender || idToListedToken[i+1].seller == msg.sender){
-               
-            
-            uint currentId = i + 1;
-            ListedTokens storage currentItem = idToListedToken[currentId];
-            items[currentIndex] = currentItem;
-            currentIndex += 1;
+            if (
+                idToListedToken[i + 1].owner == msg.sender ||
+                idToListedToken[i + 1].seller == msg.sender
+            ) {
+                uint currentId = i + 1;
+                ListedTokens storage currentItem = idToListedToken[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
             }
         }
         return items;
+    }
+
+    function executeSales(uint tokenId) public payable {
+        uint price = idToListedToken[tokenId].price;
+        require(msg.value == price, "please submit the right price");
+        address seller = idToListedToken[tokenId].seller;
+        idToListedToken[tokenId].currentlylisted = true;
+        idToListedToken[tokenId].seller = payable(msg.sender);
+        _itemsold.increment();
+        _transfer(address(this), msg.sender, tokenId);
+        approve(address(this), tokenId);
+        payable(owner).transfer(listprice);
+        payable(seller).transfer(msg.value);
     }
 }

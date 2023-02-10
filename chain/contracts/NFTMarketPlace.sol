@@ -11,34 +11,84 @@ contract NFTMarketPlace is ERC721URIStorage {
     Counters.Counter private _tokenid;
     Counters.Counter private _itemsold;
 
-    uint256 listprice =0.01 ether;
+    uint256 listprice = 0.01 ether;
+
     constructor() ERC721("NFTmarketplace", "NFTM") {
         owner = payable(msg.sender);
     }
-    struct ListedTokens{
+
+    struct ListedTokens {
         uint256 tokenid;
         address payable owner;
         address payable seller;
         uint256 price;
         bool currentlylisted;
     }
-    mapping(uint256 =>ListedTokens) private idToListedToken;
-    function updateListPrice(uint256 _listPrice)public payable{
-        require(owner == msg.sender,"only owner can change price");
+    mapping(uint256 => ListedTokens) private idToListedToken;
+
+    function updateListPrice(uint256 _listPrice) public payable {
+        require(owner == msg.sender, "only owner can change price");
         listprice = _listPrice;
     }
-    function getListPrice()public view returns(uint256){
+
+    function getListPrice() public view returns (uint256) {
         return listprice;
     }
-    function getLatestIdToListedToken()public view returns(ListedTokens memory){
+
+    function getLatestIdToListedToken()
+        public
+        view
+        returns (ListedTokens memory)
+    {
         uint256 currentTokenId = _tokenid.current();
- return idToListedToken[currentTokenId];
+        return idToListedToken[currentTokenId];
     }
-    function getListedForTokenId(uint256 tokenid)public view returns(ListedTokens memory){
+
+    function getListedForTokenId(
+        uint256 tokenid
+    ) public view returns (ListedTokens memory) {
         return idToListedToken[tokenid];
     }
-    function getCurrentTokenId()public view returns(uint256){
+
+    function getCurrentTokenId() public view returns (uint256) {
         return _tokenid.current();
     }
-    
+
+    function createToken(
+        string memory tokenURI,
+        uint256 price
+    ) public payable returns (uint) {
+        require(msg.value == listprice, "send enough ether to list");
+        require(price > 0, "provide the right amount");
+        _tokenid.increment();
+        uint currentTokenId = _tokenid.current();
+        _safeMint(msg.sender, currentTokenId);
+        _setTokenURI(currentTokenId, tokenURI);
+        createListedToken(currentTokenId, price);
+        return currentTokenId;
+    }
+
+    function createListedToken(uint256 tokenid, uint256 price) private {
+        idToListedToken[tokenid] = ListedTokens(
+            tokenid,
+            payable(address(this)),
+            payable(msg.sender),
+            price,
+            true
+        );
+        _transfer(msg.sender, address(this), tokenid);
+    }
+
+    function getAllNFTS() public view returns (ListedTokens[] memory) {
+        uint nftcount = _tokenid.current();
+        ListedTokens[] memory tokens = new ListedTokens[](nftcount);
+        uint currentIndex = 0;
+        for (uint i = 0; i < nftcount; i++) {
+            uint currentId = i + 1;
+            ListedTokens storage currentItem = idToListedToken[currentId];
+            tokens[currentIndex] = currentItem;
+            currentIndex += 1;
+        }
+        return tokens;
+    }
 }

@@ -7,7 +7,7 @@ const ALCHEMY = process.env.ALCHEMY_KEY;
 module.exports = {
   solidity: "0.8.17",
   networks:{
-    Goerli:{
+    goerli:{
       url: ALCHEMY,
       accounts: [KEY],
     },

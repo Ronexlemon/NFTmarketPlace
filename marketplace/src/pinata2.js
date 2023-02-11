@@ -1,39 +1,11 @@
-import.meta.env.VITE_APIKEY;
-import.meta.env.VITE_APISECRET;
- const key = import.meta.env.VITE_APIKEY;
-const secret = import.meta.env.VITE_APISECRET;;
-console.log("values",import.meta.env.VITE_APIKEY );
-import axios from 'axios';
-import FormData from 'form-data';
+require('dotenv').config({path: ".env"});
+const key = process.env.APIKEY;
+const secret = process.env.APISECRET;
 
-export  const uploadJSONToIPFS = async(JSONBody) => {
-    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-    //making axios POST request to Pinata ⬇️
-    return axios 
-        .post(url, JSONBody, {
-            headers: {
-                pinata_api_key: key,
-                pinata_secret_api_key: secret,
-            }
-        })
-        .then(function (response) {
-           return {
-               success: true,
-               pinataURL: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
-           };
-        })
-        .catch(function (error) {
-            console.log(error)
-            return {
-                success: false,
-                message: error.message,
-            }
+const axios = require('axios');
+const FormData = require('form-data');
 
-    });
-};
-
-
- export const  uploadFileToIPFS = async(file) => {
+const  uploadFileToIPFS = async(file) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     //making axios POST request to Pinata ⬇️
     
@@ -91,3 +63,5 @@ export  const uploadJSONToIPFS = async(JSONBody) => {
 
     });
 };
+
+export default uploadFileToIPFS;

@@ -10,7 +10,7 @@ export default function LandingPage() {
  
 
   return (
-    <div className="h-screen  bg-gray-100 text-xs   ">
+    <div className="h-screen  bg-black text-white text-xs   ">
  
  <h1 className='flex  justify-center items-center pt-20'>The NFT MarketPlace</h1>
         <div className='w-full h-full flex justify-center  '>

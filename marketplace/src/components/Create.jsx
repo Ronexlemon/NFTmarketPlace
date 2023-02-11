@@ -4,7 +4,7 @@ export default function Create(){
 
     return(
         <div className="h-full  w-full mt-4 flex justify-center">
-            <div className="h-3/4 w-1/4 bg-blue-600 rounded overflow-hidden">
+            <div className="h-3/4 w-1/4 bg-green-100 text-purple-400 rounded overflow-hidden">
                
                 <form className="p-4  grid grid-auto-rows gap-2">
                <label>Name:</label> 

@@ -6,7 +6,9 @@ export default function Navbar(){
     return(
         <div className="sticky top-0 text-xs p-4 h-10 m-0 w-full bg-gray-100 border border-b-gray-500 flex justify-between">
             <div className="">
-            <h2 >MarketPlace</h2>
+            <button onClick={()=>navigate("/MarketPlace")} className= "h-5 hover:bg-black hover:rounded  hover:text-white cursor-pointer">
+                    MarketPlace
+                </button>
             </div>
             <div className="flex justify-between w-1/4">
                 <button onClick={()=>navigate("/")} className= "h-5 hover:bg-black hover:rounded  hover:text-white cursor-pointer">

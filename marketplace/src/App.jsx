@@ -10,8 +10,10 @@ import MarketPlace from './pages/MarketPlace'
 import { AppContext } from './Contexts/AppContexts'
 import {Contract} from "ethers";
 import Web3Modal, { providers } from "web3modal";
+import marketPlaceAbi from "../src/components/abi/marketplaceAbi";
 
 function App() {
+  const nftMarketPlaceContract = "0x05198c2783d3497361ca936a70E5643287dfD0B8";
   const Web3ModalRef = useRef();
   const [userAccount, setUserAccount] = useState(null)
   
@@ -41,14 +43,22 @@ function App() {
       disableInjectedProvider: false,
       cacheProvider:false
   });
-  connectWallet();
+  
+  
 
  },[])
   return (
 <AppContext.Provider value={{
-  Contract
+  Contract,
+  connectWallet,
+  userAccount,
+  nftMarketPlaceContract,
+  marketPlaceAbi,
+
+
 
 }}>
+  
    
     <Router>
        <Navbar/>

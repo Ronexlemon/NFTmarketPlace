@@ -1,4 +1,4 @@
-import { useState,useRef } from 'react'
+import { useState,useRef,useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -8,15 +8,42 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Create from './components/Create'
 import MarketPlace from './pages/MarketPlace'
 import { AppContext } from './Contexts/AppContexts'
-import { Provider,Contract } from 'ethers'
-import Web3Modal from "web3modal";
+import {Contract} from "ethers";
+import Web3Modal, { providers } from "web3modal";
 
 function App() {
   const Web3ModalRef = useRef();
-  const [count, setCount] = useState(0)
+  const [userAccount, setUserAccount] = useState(null)
   
- 
+ //provide signer or provider
+ const connectWallet = async(needsigner =false)=>{
+  const provider = await Web3ModalRef.current.connect();
+  const web3Providers = new ethers.providers.web3Providers(provider);
+  const accounts = await web3Providers.listAccounts();
+  setUserAccount(accounts);
+  //check if network is goerli
+  const {chainId} = await web3Providers.getNetwork();
+  if(chainId != 5){
+    Window.alert("please connect to goerli network");
+  }
+  if(needsigner){
+    const signer = await web3Providers.getSigner();
+    return signer;
+  }
+  return web3Providers;
 
+ }
+
+ useEffect(()=>{
+  Web3ModalRef.current = new Web3Modal({
+    network: "goerli",
+      providerOptions: {},
+      disableInjectedProvider: false,
+      cacheProvider:false
+  });
+  connectWallet();
+
+ },[])
   return (
 <AppContext.Provider value={{
   Contract

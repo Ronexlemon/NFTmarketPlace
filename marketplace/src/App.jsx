@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -7,12 +7,21 @@ import LandingPage from './pages/LandingPage'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Create from './components/Create'
 import MarketPlace from './pages/MarketPlace'
+import { AppContext } from './Contexts/AppContexts'
+import { Provider,Contract } from 'ethers'
+import Web3Modal from "web3modal";
 
 function App() {
+  const Web3ModalRef = useRef();
   const [count, setCount] = useState(0)
+  
  
 
   return (
+<AppContext.Provider value={{
+  Contract
+
+}}>
    
     <Router>
        <Navbar/>
@@ -25,6 +34,7 @@ function App() {
       
     </Routes>
   </Router>
+  </AppContext.Provider>
     
   )
 }

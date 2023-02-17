@@ -46,8 +46,8 @@ export default function Navbar(){
                 
             </div>
             <div>
-                { connect? <button onClick={() => getAddressForUser()} className= "h-5 bg-green-400 rounded  hover:text-white cursor-pointer">
-                    {userAccount}
+                { userAccount !=null? <button onClick={() => getAddressForUser()} className= "h-5 bg-green-400 rounded  hover:text-white cursor-pointer">
+                    {userAccount.substring(0,6)}...
                 </button>: <button onClick={() => getAddressForUser()} className= "h-5 bg-red-400 rounded  hover:text-white cursor-pointer">
                     Connect Wallet
                 </button>}

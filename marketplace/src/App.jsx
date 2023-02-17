@@ -18,7 +18,7 @@ import {Web3Provider} from "@ethersproject/providers";
 function App() {
   const nftMarketPlaceContract = "0x05198c2783d3497361ca936a70E5643287dfD0B8";
   const Web3ModalRef = useRef();
-  const [userAccount, setUserAccount] = useState("");
+  const [userAccount, setUserAccount] = useState(null);
   
  //provide signer or provider using web3\
  /**

@@ -1,13 +1,25 @@
-import React,{useState} from "react";
+import React,{useState,useContext} from "react";
 
  import { useNavigate } from "react-router";
  import { ethers } from "ethers";
+ import { marketPlaceAbi } from "./abi/marketplaceAbi";
  
- import marketplacejson from "../components/marketplaceabi.json";
  import { uploadFileToIPFS, uploadJSONToIPFS } from "../pinata";
+ import { AppContext } from "../Contexts/AppContexts";
+//  import BigNumber from 'bignumber.js';
+
+
 
 
 export default function Create(){
+    const{
+        Contract,
+        connectWallet,
+        userAccount,
+        nftMarketPlaceContract,
+        // marketPlaceAbi,
+    
+    } = useContext(AppContext);
     const [formParams, updateFormParams] = useState({ name: '', description: '', price: ''});
         const [fileURL, setFileURL] = useState(null);
        
@@ -59,16 +71,18 @@ export default function Create(){
         try {
             const metadataURL = await uploadMetadataToIPFS();
             //After adding your Hardhat network to your metamask, this code will get providers and signers
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
+            const signer = await connectWallet(true);
             updateMessage("Please wait.. uploading (upto 5 mins)")
 
             //Pull the deployed contract instance
-            let contract = new ethers.Contract(Marketplace.address, Marketplace.abi, signer)
+            let contract = new Contract(nftMarketPlaceContract,marketPlaceAbi,signer)
 
             //massage the params to be sent to the create NFT request
-            const price = ethers.utils.parseUnits(formParams.price, 'ether')
+           
+            const price = formParams.price*10;
+            console.log("the price",price);
             let listingPrice = await contract.getListPrice()
+            console.log("the", listingPrice);
             listingPrice = listingPrice.toString()
 
             //actually create the NFT

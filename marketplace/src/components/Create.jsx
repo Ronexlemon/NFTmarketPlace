@@ -81,7 +81,7 @@ export default function Create(){
            
             const price = formParams.price*10;
             console.log("the price",price);
-            let listingPrice = await contract.getListPrice()
+            let listingPrice = await contract.getListPrice();
             console.log("the", listingPrice);
             listingPrice = listingPrice.toString()
 

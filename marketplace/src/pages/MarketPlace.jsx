@@ -48,36 +48,50 @@ const  MarketPlace =()=>{
             "address":"0xe81Bf5A757C4f7F82a2F23b1e59bE45c33c5b13",
         },
     ];
-    const [data, updateData] = useState(sampleData);
+    const [data, updateData] = useState([]);
 const [dataFetched, updateFetched] = useState(false);
 
 async function getAllNFTs() {
     const provider = await connectWallet();
     const contract = new Contract(nftMarketPlaceContract, marketPlaceAbi, provider)
     let transaction = await contract.getAllNFTS();
-    
+    console.log( transaction);
 
     //Fetch all the details of every NFT from the contract and display
-    const items = await Promise.all(transaction.map(async i => {
-        const tokenURI = await contract.tokenURI(i.tokenId);
-        let meta = await axios.get(tokenURI);
-        meta = meta.data;
+    const items = await Promise.allSettled(
+        transaction.map(async i => {
+          try {
+            const tokenURI = await contract.tokenURI(i.tokenId);
+            let meta = await axios.get(tokenURI);
+            meta = meta.data;
+          console.log("the mata is:",meta)
+            // const price = ethers.utils.formatUnits(i.price.toString(), 'ether');
+            const price = i.price.toString();
+            const item = {
+              price:price,
+              tokenId: i.tokenId.toNumber(),
+              seller: i.seller,
+              owner: i.owner,
+              image: meta.image,
+              name: meta.name,
+              description: meta.description,
+            };
+            return item;
+          } catch (error) {
+            return error;
+          }
+        })
+      );
+      
+      const validItems = items.filter(item => item.status === 'fulfilled').map(item => item.value);
+      const errors = items.filter(item => item.status === 'rejected').map(item => item.reason);
+      
+      console.log(validItems); // Output: An array of items with the specified properties
+      console.log(errors); // Output: An array of errors, if any
+      
 
-        let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
-        let item = {
-            price,
-            tokenId: i.tokenId.toNumber(),
-            seller: i.seller,
-            owner: i.owner,
-            image: meta.image,
-            name: meta.name,
-            description: meta.description,
-        }
-        return item;
-    }))
-
-    updateFetched(true);
-    updateData(items);
+    // updateFetched(true);
+     updateData(items);
 }
     
 useEffect(()=>{
